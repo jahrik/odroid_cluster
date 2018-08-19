@@ -12,10 +12,10 @@ Here is the complete parts list and prices in US$.  Including tools and other th
 
 | Part        |  Amount  |  Price  | Total |
 |:----------- |:--------:|:-------:| -----:|
-| [Odroid HC-1](https://www.amazon.com/gp/product/B075TGWW8N/ref=oh_aui_detailpage_o01_s00?ie=UTF8&psc=1) | 3 | $59.95 + $7.15 shipping | about $192.31 if purchased and shipped together |
+| [Odroid HC-1](https://www.amazon.com/gp/product/B075TGWW8N/ref=oh_aui_detailpage_o01_s00?ie=UTF8&psc=1) | 3 | $59.95 + $7.15 shipping | $192.31 if purchased and shipped together |
 | [5V 20A Power Supply](https://www.amazon.com/gp/product/B06XK2DDW4/ref=oh_aui_detailpage_o04_s01?ie=UTF8&psc=1) | 1 | $17.99 | $17.99 |
 | [32GB MicroSD](https://www.amazon.com/gp/product/B06XWN9Q99/ref=oh_aui_detailpage_o00_s00?ie=UTF8&psc=1) | 3 | $11.49 | $34.47 |
-| [240GB SSD](https://www.amazon.com/gp/product/B01M61OWRI/ref=oh_aui_detailpage_o00_s01?ie=UTF8&psc=1) | 3 | $$47.99 | $143.97 |
+| [240GB SSD](https://www.amazon.com/gp/product/B01M61OWRI/ref=oh_aui_detailpage_o00_s01?ie=UTF8&psc=1) | 3 | $47.99 | $143.97 |
 | [80mm Fan](https://www.amazon.com/gp/product/B07DXNT9J9/ref=oh_aui_detailpage_o02_s00?ie=UTF8&psc=1) | 1 | $15.95 | $15.95 |
 | [6 pack Cat 6 Ethernet Cable 1 ft](https://www.amazon.com/gp/product/B01IQWGKQ6/ref=oh_aui_detailpage_o00_s00?ie=UTF8&psc=1) | 1 | $8.90 | $8.90 |
 | [9 Port 40A Power Splitter](https://www.amazon.com/gp/product/B074QMRBPB/ref=od_aui_detailpages00?ie=UTF8&psc=1) | 1 | $58.00 | $58.00 |
@@ -25,6 +25,6 @@ Here is the complete parts list and prices in US$.  Including tools and other th
 | [Heat Gun](https://www.amazon.com/gp/product/B000X4SMRQ/ref=od_aui_detailpages00?ie=UTF8&psc=1) | 1 | $23.94 | $23.94 |
 | [Heat Shrink Tubing](https://www.amazon.com/gp/product/B072PCQ2LW/ref=od_aui_detailpages00?ie=UTF8&psc=1) | 1 | $8.99 | $8.99 |
 | [10 pack 4 Amp Two Prong Blade Plug-in ATC Fuses](https://www.amazon.com/gp/product/B01HDUCOT4/ref=oh_aui_detailpage_o05_s00?ie=UTF8&psc=1) | 1 | $6.30 | $6.30 |
-|**Total**|||**$0**|
+|**Total**|||**$572.27**|
 
 
