@@ -42,13 +42,13 @@ Here is the complete parts list and prices in US $.  There are a couple of ways 
 
 ![Power Supply](https://github.com/jahrik/odroid_cluster/blob/master/pics/power_supply.jpg)
 
-The [5V 20A Power Supply](https://www.amazon.com/gp/product/B06XK2DDW4/ref=oh_aui_detailpage_o04_s01?ie=UTF8&psc=1) I went with, should be enough to power 5 HC-1's at load.  Good enough for what I have planned.  A few YouTube videos later and I had enough to get started.  I used a Powerpole power splitter for the first time ever and am pretty happy with how it turned out.  I can easily make a new power cable, add a 4 Amp fuse and I've got one more node in the cluster.
+The [5V 20A Power Supply](https://www.amazon.com/gp/product/B06XK2DDW4/ref=oh_aui_detailpage_o04_s01?ie=UTF8&psc=1) I went with, should be enough to power 5 HC-1's at load, which is good enough for what I have planned.  I used a Powerpole power splitter for the first time ever and am pretty happy with how it turned out.  I can easily make a new power cable, add a 4 Amp fuse and add another node to the cluster.
 
 ![Odroid Front](https://github.com/jahrik/odroid_cluster/blob/master/pics/odroid_01.jpg)
 
-The 5V 4A power brick you can order with the HC-1 works just fine and that's what I used while evaluating the first one.  I don't want to manage 3 to 5 of those blocks in my already filling up power strip on the bottom shelf of the rack, so I came up with a solution that should scale with the number of these nodes I want to stick in this cluster and then some.
+The 5V 4A power brick you can order with the HC-1 works just fine and that's what I used while evaluating the first one.  I don't want to manage 3 to 5 of those blocks in my already filling up power strip on the bottom shelf of the rack, so that is why I went with a solution that should scale with the number of nodes I want and then some.
 
-From failed attempts at trying to power up the HC-1 with it plugged into USB power bricks, I discovered that even if you buy a USB power supply that has 30 Amps, they're still most likely limited to 2.5 Amps per USB port.  This is great for a Pi, but will not run the HC-1.
+From failed attempts at trying to power up the HC-1 with it plugged into USB power bricks, I discovered that even if you buy a USB power supply that advertises 12 Amps, they're still most likely limited to 2.5 Amps per USB port.  This is great for a Pi, but will not run the HC-1.
 
 **This will not work**
 
