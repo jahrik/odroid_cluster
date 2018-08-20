@@ -101,14 +101,14 @@ Update /etc/hosts and /etc/hostname, ex. host 'ninja'
     root@odroid:~# cat /etc/hosts
     127.0.0.1	ninja
 
-Add a user, where <user> == your user
+Add a user, where user == your user
 
-    root@odroid:~# adduser <user>
+    root@odroid:~# adduser user
 
-If you want ansible to have passwordless sudo, where <user> == your user
+If you want ansible to have passwordless sudo, where user == your user
 
-    root@odroid:~# cat /etc/sudoers.d/<user>
-    <user> ALL=(ALL) NOPASSWD: ALL
+    root@odroid:~# cat /etc/sudoers.d/user
+    user ALL=(ALL) NOPASSWD: ALL
 
 Install a few dependencies, upgrade, and reboot.  Do this with all three nodes.
 
