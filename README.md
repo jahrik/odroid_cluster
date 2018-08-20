@@ -77,6 +77,54 @@ So far, I've been able to get ubuntu 16.04 and 18.04 running, from [images found
 
 But, things seem to work great in 18.04, so that's what I'm sticking with, for now.  I've had mixed results with Docker Swarm, so far, but standalone docker seams to work fine.  Glusterfs has been working very well on both 16.04 and 18.04 and kept working just fine on an upgrade from 16.04 to 18.04 without error.  So did Docker.  Elasticsearch 5.0.1 and 6.3.1 tested running well on the Odroid.  It was able to keep up with 3 packetbeat clients hitting it with network traffic, as well as, Kibana  and Grafana querying it on the front end.  I started putting that together in an Ansible role, [arm-elasticsearch](https://gitlab.com/jahrik/arm-elasticsearch).
 
+#### Installation
+
+With image at hand, installation is pretty simple.  Mount the micro SD and use dd to copy the image.
+
+    sudo dd if=ubuntu-18.04-4.14-minimal-odroid-xu4-20180531.img of=/dev/mmcblk0 bs=4M status=progress                     
+    1577058304 bytes (1.6 GB, 1.5 GiB) copied, 1 s, 1.6 GB/s
+    499+1 records in
+    499+1 records out
+    2094006272 bytes (2.1 GB, 2.0 GiB) copied, 85.9404 s, 24.4 MB/s
+
+Plug it in and connect an Ethernet cable.  You'll want a DHCP server running to give this new box an IP address.  Ping for 'odroid' until you see it come online, then ssh in to update the hostname, add a user, etc..  I'm leaving DHCP enabled and just relying on a hostname.
+
+Defaults:
+* user = root
+* pass = odroid
+
+Update /etc/hosts and /etc/hostname, ex. host 'ninja'
+
+    root@odroid:~# cat /etc/hostname 
+    ninja
+
+    root@odroid:~# cat /etc/hosts
+    127.0.0.1	ninja
+
+Add a user, where <user> == your user
+
+    root@odroid:~# adduser <user>
+
+If you want ansible to have passwordless sudo, where <user> == your user
+
+    root@odroid:~# cat /etc/sudoers.d/<user>
+    <user> ALL=(ALL) NOPASSWD: ALL
+
+Install a few dependencies, upgrade, and reboot.  Do this with all three nodes.
+
+    apt update
+    apt upgrade
+    apt install vim
+    apt install python
+
+If you want passwordless ssh access, add an ssh key to each host.
+
+    ssh-copy-id ninja
+    ssh-copy-id oroku
+    ssh-copy-id venus
+
+Now that each node has an identity, a user with sudo and ssh access, and python installed, they are ready for Ansible provisioning.
+
 ### Glusterfs
 
 One of the main purposes of this build is to test [Glusterfs](https://docs.gluster.org/en/latest/) as an alternative to mounting persistent Docker volumes to an NFS share.  Gluster seams to scale well enough and should keep up with scaling Docker Swarm nodes, as needed.  An NFS server is a valid solution for data persistence, but leaves a single point of failure.  If the NFS server goes down, it wouldn't matter how many nodes I had in my Swarm cluster, 3 or 30, I will have just lost any data that was stored on the NFS.  Replicating storage across all Swarm nodes would mean a Docker service could fail on node 00 and be automatically brought back up on node 01, where the data has been replicated, the volume would remount any directories from the gluster-client, and start back up with minimal down-time.  If configured with enough nodes and replication, you can potentially lose a hardware node or two and have things keep running normally, while you replace the underlying failed hardware.
@@ -206,6 +254,71 @@ Finally, mount the volume with the gluster-client.
           opts: "defaults,_netdev,log-level=WARNING,log-file=/var/log/gluster.log"
           state: mounted
 
+Run it with:
+
+    ansible-playbook -i inventory.ini playbook.yml
+
+    PLAY [gluster] ********************************************************************************************************
+
+    TASK [Gathering Facts] ************************************************************************************************
+    ok: [oroku]
+    ok: [ninjara]
+    ok: [venus]
+
+    ...
+    ...
+    ...
+
+    TASK [Configure Gluster volume.] **************************************************************************************
+    ok: [ninjara]
+
+    TASK [Ensure Gluster volume is mounted.] ******************************************************************************
+    ok: [oroku]
+    ok: [venus]
+    ok: [ninjara]
+
+    PLAY RECAP ************************************************************************************************************
+    ninjara                    : ok=9    changed=0    unreachable=0    failed=0   
+    oroku                      : ok=8    changed=0    unreachable=0    failed=0   
+    venus                      : ok=8    changed=0    unreachable=0    failed=0  
+
+Verify peers with:
+
+    root@oroku:~# gluster peer status
+    Number of Peers: 2
+
+    Hostname: ninjara
+    Uuid: 19c60517-d584-4cf2-9dcb-fedca9463507
+    State: Peer in Cluster (Connected)
+
+    Hostname: venus
+    Uuid: f582eb76-97f0-483d-9a31-91c272915940
+    State: Peer in Cluster (Connected)
+
+Verify volume with:
+
+    root@oroku:~# gluster volume status 
+    Status of volume: g1
+    Gluster process                             TCP Port  RDMA Port  Online  Pid
+    ------------------------------------------------------------------------------
+    Brick ninja:/bricks/brick1                  49152     0          Y       1689 
+    Brick venus:/bricks/brick1                  49152     0          Y       1019 
+    Brick oroku:/bricks/brick1                  49152     0          Y       10326
+    NFS Server on localhost                     N/A       N/A        N       N/A  
+    Self-heal Daemon on localhost               N/A       N/A        Y       10317
+    NFS Server on ninjara                       N/A       N/A        N       N/A  
+    Self-heal Daemon on ninjara                 N/A       N/A        Y       1680 
+    NFS Server on venus                         N/A       N/A        N       N/A  
+    Self-heal Daemon on venus                   N/A       N/A        Y       973  
+     
+    Task Status of Volume g1
+    ------------------------------------------------------------------------------
+    There are no active volume tasks
+
+### Docker Swarm
+
+Setting up Docker Swarm is easy enough, so I won't go in to too much detail and will do a lazy set up for this example.
+
 ### Mysql test
 
 Where `/mnt/g1` is the mounted gluster share on every box.
@@ -269,7 +382,4 @@ With 3 nodes running, you can see the mysql directory is replicating to all 3 no
     13446363851844762839     4 drwx------ 2 999 docker     4096 Aug 18 11:31 performance_schema
 
 I'm thinking if all three of these nodes are running in Docker Swarm mode and the service dies and is restarted on any of the nodes, It will continue to have the same data on all three.  Have not tested this, yet.
-
-### Docker Swarm
-
 
