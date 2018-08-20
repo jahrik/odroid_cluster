@@ -1,11 +1,11 @@
 # Odroid HC-1 Cluster Build
 
-With a little inspiration from the [200TB Glusterfs Odroid HC-2 Build](https://www.reddit.com/r/DataHoarder/comments/8ocjxz/200tb_glusterfs_odroid_hc2_build/) posted to [/r/DataHoarder/](https://www.reddit.com/r/DataHoarder/) a while back and a whole lot of [bonus.ly](https://bonus.ly/) dollars from work, I have finally completed my 3 node HC-1 cluster build and want to share my experiences with anyone else wanting to checkout single board computing for themselves.  Unlike the massive amount of storage provided by the [Odroid HC-2](https://www.hardkernel.com/main/products/prdt_info.php?g_code=G151505170472) build, I am using the [Odroid HC-1](https://www.hardkernel.com/main/products/prdt_info.php?g_code=G150229074080).  The main difference being, it will only fit a 2.5" drive, where the HC-2 will fit a full size 3.5 inch HDD.  The purpose of this build is not a NAS, but rather a focus on clustering software itself.  Primarily, Docker Swarm backed by Gluster.  Future plans also include testing Elasticsearch, Hadoop, and any other clustering software that [sparks](https://spark.apache.org/) my interest.
+With a little inspiration from the [200TB Glusterfs Odroid HC-2 Build](https://www.reddit.com/r/DataHoarder/comments/8ocjxz/200tb_glusterfs_odroid_hc2_build/) posted to [/r/DataHoarder/](https://www.reddit.com/r/DataHoarder/) a while back and a whole lot of [bonus.ly](https://bonus.ly/) dollars from work, I have finally completed my 3 node HC-1 cluster build am sharing my experience with anyone else wanting to check out single board computing for themselves.  Unlike the massive amount of storage provided by the [Odroid HC-2](https://www.hardkernel.com/main/products/prdt_info.php?g_code=G151505170472) build, I am using the [Odroid HC-1](https://www.hardkernel.com/main/products/prdt_info.php?g_code=G150229074080).  The main difference being, it will only fit a 2.5" drive, where the HC-2 will fit a full size 3.5 inch HDD.  The purpose of this build is not a NAS, but rather a focus on clustering software itself.  Primarily, Docker Swarm backed by Glusterfs.  Future plans also include testing Elasticsearch, Hadoop, and any other clustering software that [sparks](https://spark.apache.org/) my interest.
 
 ![Odroid Front](https://github.com/jahrik/odroid_cluster/blob/master/pics/odroid_02.jpg)
 
 ## Parts List
-Here is the complete parts list and prices in US $.  There are a couple of ways you could go with powering this, so I will create two lists for power, including tools and other things I bought to make the build a little better, but are not necessary for it to work.  All of it was purchased from Amazon, so prices may vary a bit.
+Here is the complete parts list and prices in US dollars.  There are a couple of ways you could go with powering this, so I will create two lists for power, including tools and other things I bought to make the build a little better, but are not necessary for it to work.  All of it was purchased from Amazon, so prices may vary a bit.
 
 ### Odroid
 | Part        |  Amount  |  Price  | Total |
@@ -36,17 +36,21 @@ Here is the complete parts list and prices in US $.  There are a couple of ways 
 | [10 pack 4 Amp Two Prong Blade Plug-in ATC Fuses](https://www.amazon.com/gp/product/B01HDUCOT4/ref=oh_aui_detailpage_o05_s00?ie=UTF8&psc=1) | 1 | $6.30 | $6.30 |
 |**Total**|||**$176.67**|
 
-## Putting it all together
+## Putting it together
+
+I started with one Odroid and added to it over a few months.  I have been tinkering with a couple of Raspberry Pi 3B+ and having fun, but wanted something a bit more powerful for running tests and possibly use as a logging and analytics back end, down the road when I get bored with it and just make it do a thing for a while. 
+
+![Odroid Front](https://github.com/jahrik/odroid_cluster/blob/master/pics/odroid_01.jpg)
 
 ### Power
 
 ![Power Supply](https://github.com/jahrik/odroid_cluster/blob/master/pics/power_supply.jpg)
 
-The [5V 20A Power Supply](https://www.amazon.com/gp/product/B06XK2DDW4/ref=oh_aui_detailpage_o04_s01?ie=UTF8&psc=1) I went with, should be enough to power 5 HC-1's at load, which is good enough for what I have planned.  I used a Powerpole power splitter for the first time ever and am pretty happy with how it turned out.  I can easily make a new power cable, add a 4 Amp fuse and add another node to the cluster.
+The [5V 20A Power Supply](https://www.amazon.com/gp/product/B06XK2DDW4/ref=oh_aui_detailpage_o04_s01?ie=UTF8&psc=1) I went with, should be enough to power 5 HC-1's at load, which is good enough for what I have planned.  I used a Powerpole power splitter for the first time ever and am pretty happy with how it turned out.  I can easily make a new power cable, add a 4 Amp fuse, and add another node to the cluster.  Be sure and use the 15 Amp connectors, the 30 Amp connectors that came with the Crimper are too big for these small wires.
 
-![Odroid Front](https://github.com/jahrik/odroid_cluster/blob/master/pics/odroid_01.jpg)
+![Odroid Front](https://github.com/jahrik/odroid_cluster/blob/master/pics/plug_parts.jpg)
 
-The 5V 4A power brick you can order with the HC-1 works just fine and that's what I used while evaluating the first one.  I don't want to manage 3 to 5 of those blocks in my already filling up power strip on the bottom shelf of the rack, so that is why I went with a solution that should scale with the number of nodes I want and then some.
+The 5V 4A power brick you can order with the HC-1 works just fine and that's what I used while evaluating the first one, but I don't want to manage 3 to 5 of those blocks in my already filling up power strip on the bottom shelf of the rack, so that is why I went with a solution that will scale with the number of nodes I add and then some.
 
 From failed attempts at trying to power up the HC-1 with it plugged into USB power bricks, I discovered that even if you buy a USB power supply that advertises 12 Amps, they're still most likely limited to 2.5 Amps per USB port.  This is great for a Pi, but will not run the HC-1.
 
@@ -56,15 +60,15 @@ From failed attempts at trying to power up the HC-1 with it plugged into USB pow
 
 ### Cooling
 
-I bought the 5V USB model and tested it plugged in to the front of one of the HC-1 and it worked great, but I opted to take a spare connector and plug it directly in to the power splitter.  This means it runs at full speed at all times, but so far, that hasn't been a problem.  Things stay very cool and the fan barely makes any noise, even at full speed. I've been happy with every Noctua fan I've bought.
+I went with a 5V USB powered fan and tested it plugged in to the front of one of the HC-1 and it worked great, but I opted to take a spare connector and plug it directly in to the power splitter.  This means it runs at full speed at all times, but so far, that hasn't been a problem.  Things stay very cool and the fan barely makes any noise, even at full speed. I've been happy with every Noctua fan I've bought.
 
 ![Odroid Back](https://github.com/jahrik/odroid_cluster/blob/master/pics/odroid_03.jpg)
 
 ### OS
 
-I started with a single HC-1 to see how it worked before purchasing another two.  I wanted a quick comparison from the couple of Raspberry Pi 3B+ I have been playing around with and was happy with what I found.  So far, I've been able to get ubuntu 16.04 and 18.04 running, from [images found on the Odroid site](https://wiki.odroid.com/odroid-xu4/os_images/os_images).  I tested [Armbian](https://www.armbian.com/odroid-hc1/), but wasn't able to get a shell onto the box after.  Not sure if ssh is enabled by default or not.  Also, tested [Arch](https://archlinuxarm.org/platforms/armv7/samsung/odroid-xu4) without success, so far.  I'm happy with ubuntu 18.04 right now because Docker Swarm seams to be working as it should with armhf 32 bit applications.  I was having weird Kernel errors when I tested Docker swarm on ubuntu 16.04 and wasn't ever able to get Swarm mode working, however was able to start Docker containers in stand alone Docker mode.
+So far, I've been able to get ubuntu 16.04 and 18.04 running, from [images found on the Odroid site](https://wiki.odroid.com/odroid-xu4/os_images/os_images).  I tested [Armbian](https://www.armbian.com/odroid-hc1/), but wasn't able to get a shell onto the box after.  Not sure if ssh is enabled by default or not.  Also, tested [Arch](https://archlinuxarm.org/platforms/armv7/samsung/odroid-xu4) without success, so far.  I'm happy with ubuntu 18.04 right now because Docker Swarm seams to be working as it should with armhf 32 bit applications.  I was having weird Kernel errors when I tested Docker Swarm on ubuntu 16.04 and wasn't ever able to get Swarm mode working, however was able to start Docker containers in stand alone Docker mode.
 
-**example error output for ubuntu 16.04 in swarm mode**
+**example error output for ubuntu 16.04 in Swarm mode**
 
     docker service ps --no-trunc ubuntu_ubuntu
 
@@ -73,3 +77,5 @@ I started with a single HC-1 to see how it worked before purchasing another two.
 
 But, things seam to work great in 18.04, so that's what I'm sticking with for now.
 
+### Glusterfs
+### Docker Swarm
