@@ -2,7 +2,7 @@
 
 With a little inspiration from the [200TB Glusterfs Odroid HC-2 Build](https://www.reddit.com/r/DataHoarder/comments/8ocjxz/200tb_glusterfs_odroid_hc2_build/) posted to [/r/DataHoarder/](https://www.reddit.com/r/DataHoarder/) a while back and a whole lot of [bonus.ly](https://bonus.ly/) dollars from work, I have finally completed my 3 node HC-1 cluster build am sharing my experience with anyone else wanting to check out single board computing for themselves.  Unlike the massive amount of storage provided by the [Odroid HC-2](https://www.hardkernel.com/main/products/prdt_info.php?g_code=G151505170472) build, I am using the [Odroid HC-1](https://www.hardkernel.com/main/products/prdt_info.php?g_code=G150229074080).  The main difference being, it will only fit a 2.5" drive, where the HC-2 will fit a full size 3.5 inch HDD.  The purpose of this build is not a NAS, but rather a focus on clustering software itself.  Primarily, Docker Swarm backed by Glusterfs.  Future plans also include testing Elasticsearch, Hadoop, and any other clustering software that [sparks](https://spark.apache.org/) my interest.
 
-![Odroid Front](https://github.com/jahrik/odroid_cluster/blob/master/pics/odroid_02.jpg)
+![Odroid Front](https://github.com/jahrik/odroid_cluster/blob/master/pics/odroid_01.jpg)
 
 ## Parts List
 Here is the complete parts list and prices in US dollars.  There are a couple of ways you could go with powering this, so I will create two lists for power, including tools and other things I bought to make the build a little better, but are not necessary for it to work.  All of it was purchased from Amazon, so prices may vary a bit.
@@ -39,8 +39,6 @@ Here is the complete parts list and prices in US dollars.  There are a couple of
 ## Putting it together
 
 I started with one Odroid and added to it over a few months.  I have been tinkering with a couple of Raspberry Pi 3B+ and having fun, but wanted something a bit more powerful for running tests and possibly use as a logging and analytics back end, down the road when I get bored with it and just make it do a thing for a while. 
-
-![Odroid Front](https://github.com/jahrik/odroid_cluster/blob/master/pics/odroid_01.jpg)
 
 ### Power
 
