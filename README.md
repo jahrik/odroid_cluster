@@ -46,7 +46,7 @@ I started with one Odroid and added to it over a few months.  I have been tinker
 
 ![Power Supply](https://github.com/jahrik/odroid_cluster/blob/master/pics/power_supply.jpg)
 
-The [5V 20A Power Supply](https://www.amazon.com/gp/product/B06XK2DDW4/ref=oh_aui_detailpage_o04_s01?ie=UTF8&psc=1) I went with, should be enough to power 5 HC-1's at load, which is good enough for what I have planned.  I used a Powerpole power splitter for the first time ever and am pretty happy with how it turned out.  I can easily make a new power cable, add a 4 Amp fuse, and add another node to the cluster.  Be sure and use the 15 Amp connectors, the 30 Amp connectors that came with the Crimper are too big for these small wires.
+The [5V 20A Power Supply](https://www.amazon.com/gp/product/B06XK2DDW4/ref=oh_aui_detailpage_o04_s01?ie=UTF8&psc=1) I went with, should be enough to power 5 HC-1's at load, which is good enough for what I have planned.  I used a Powerpole power splitter for the first time ever and am pretty happy with how it turned out.  I can easily make a new power cable, add a 4 Amp fuse, and add another node to the cluster.  Be sure and use the 15 Amp connectors, the 30 Amp connectors that came with the crimper are too big for these small wires.
 
 ![Odroid Front](https://github.com/jahrik/odroid_cluster/blob/master/pics/plug_parts.jpg)
 
@@ -66,16 +66,212 @@ I went with a 5V USB powered fan and tested it plugged in to the front of one of
 
 ### OS
 
-So far, I've been able to get ubuntu 16.04 and 18.04 running, from [images found on the Odroid site](https://wiki.odroid.com/odroid-xu4/os_images/os_images).  I tested [Armbian](https://www.armbian.com/odroid-hc1/), but wasn't able to get a shell onto the box after.  Not sure if ssh is enabled by default or not.  Also, tested [Arch](https://archlinuxarm.org/platforms/armv7/samsung/odroid-xu4) without success, so far.  I'm happy with ubuntu 18.04 right now because Docker Swarm seams to be working as it should with armhf 32 bit applications.  I was having weird Kernel errors when I tested Docker Swarm on ubuntu 16.04 and wasn't ever able to get Swarm mode working, however was able to start Docker containers in stand alone Docker mode.
+So far, I've been able to get ubuntu 16.04 and 18.04 running, from [images found on the Odroid site](https://wiki.odroid.com/odroid-xu4/os_images/os_images).  I tested [Armbian](https://www.armbian.com/odroid-hc1/), but wasn't able to get a shell onto the box after.  Not sure if ssh is enabled by default or not.  Also, tested [Arch](https://archlinuxarm.org/platforms/armv7/samsung/odroid-xu4) without success, so far.  I'm happy with ubuntu 18.04 right now because Docker Swarm seems to be working as it should with armhf 32 bit applications.  I was having weird Kernel errors when I tested Docker Swarm on ubuntu 16.04 and wasn't ever able to get Swarm services started, however was able to start Docker containers in stand alone Docker mode.
 
 **example error output for ubuntu 16.04 in Swarm mode**
+
+"subnet sandbox join failed for "10.0.0.0/24": error creating vxlan interface: operation not supported"
 
     docker service ps --no-trunc ubuntu_ubuntu
 
     ID                          NAME                  IMAGE                                                                                               NODE                DESIRED STATE       CURRENT STATE             ERROR                                                                                                                   PORTS
-    jip55rydfymv3leidoxfc2fiy   ubuntu_ubuntu.1       armv7/armhf-ubuntu:latest@sha256:fc32949ab8547c9400bb804004aa3d36fd53d2fedba064a9594a173a6ed4a3b6   ninjara.dojo.io     Ready               Rejected 1 second ago     "subnet sandbox join failed for "10.0.0.0/24": error creating vxlan interface: operation not supported"
+    jip55rydfymv3leidoxfc2fiy   ubuntu_ubuntu.1       armv7/armhf-ubuntu:latest@sha256:fc32949ab8547c9400bb804004aa3d36fd53d2fedba064a9594a173a6ed4a3b6   ninja.dojo.io     Ready               Rejected 1 second ago     "subnet sandbox join failed for "10.0.0.0/24": error creating vxlan interface: operation not supported"
 
-But, things seam to work great in 18.04, so that's what I'm sticking with for now.
+But, things seem to work great in 18.04, so that's what I'm sticking with, for now.  I've had mixed results with Docker Swarm, so far, but standalone docker seams to work fine.  Glusterfs has been working very well on both 16.04 and 18.04 and kept working just fine on an upgrade from 16.04 to 18.04 without error.  So did Docker.  Elasticsearch 5.0.1 and 6.3.1 tested running well on the Odroid.  It was able to keep up with 3 packetbeat clients hitting it with network traffic, as well as, Kibana  and Grafana querying it on the front end.  I started putting that together in an Ansible role, [arm-elasticsearch](https://gitlab.com/jahrik/arm-elasticsearch).
 
 ### Glusterfs
+
+One of the main purposes of this build is to test [Glusterfs](https://docs.gluster.org/en/latest/) as an alternative to mounting persistent Docker volumes to an NFS share.  Gluster seams to scale well enough and should keep up with scaling Docker Swarm nodes, as needed.  An NFS server is a valid solution for data persistence, but leaves a single point of failure.  If the NFS server goes down, it wouldn't matter how many nodes I had in my Swarm cluster, 3 or 30, I will have just lost any data that was stored on the NFS.  Replicating storage across all Swarm nodes would mean a Docker service could fail on node 00 and be automatically brought back up on node 01, where the data has been replicated, the volume would remount any directories from the gluster-client, and start back up with minimal down-time.  If configured with enough nodes and replication, you can potentially lose a hardware node or two and have things keep running normally, while you replace the underlying failed hardware.
+
+Once I had the second Odroid, I started testing Glusterfs across two machines with 1 brick and a replication factor of 2.  Now that I have a third node, I've been testing a dispersed volume, but have been experiencing a lot of gluster-client connection issues.  Not sure what to chalk this up to just yet.  I have a lot more learning to do.  So, currently, I am running it across the three nodes with a replica factor of 3.  Meaning any file I write/delete to the SSD on node 00 will be written/deleted to the SSD on both nodes 01 and 02.  If I start a mysql Docker service with a mounted volume to this share, it should work on which ever node it starts on.
+
+While Gluster isn't bad at all to set up manually, there is an Ansible module for [gluster_volume](https://docs.ansible.com/ansible/2.6/modules/gluster_volume_module.html) that makes setup way easier!  I followed Jeff Geerling's post on a [Simple GlusterFS Setup with Ansible](https://www.jeffgeerling.com/blog/simple-glusterfs-setup-ansible) to get started.  I also added in some tasks to handle disk partitioning and formatting for me.
+
+* [gitlab.com/jahrik/arm-gluster](https://gitlab.com/jahrik/arm-gluster)
+
+Each node has the following:
+* python installed
+* ansible user with ssh key access
+* ansible user has sudo access
+
+Starting with an inventory.ini file to define the hosts.
+
+**inventory.ini**
+
+    [gluster]
+    ninja
+    venus
+    oroku
+
+Test a connection
+
+    ansible -i inventory.ini all -m ping
+
+    oroku | SUCCESS => {
+        "changed": false,
+        "ping": "pong"
+    }
+    ninja | SUCCESS => {
+        "changed": false,
+        "ping": "pong"
+    }
+    venus | SUCCESS => {
+        "changed": false,
+        "ping": "pong"
+    }
+
+Create a playbook that will configure as many nodes as I add to this inventory.
+
+First, define a couple of variables.
+
+**playbook.yml**
+
+    ---
+    - hosts: gluster
+      become: true
+      vars:
+        gluster_mount_dir: /mnt/g1
+        gluster_brick_dir: /bricks/brick1
+        gluster_brick_name: g1
+
+With hosts being called and variables set, add tasks to partition the SSD drives.  Parted will be installed and used to Create a primary partition on /dev/sda, which is what the SSD card shows up at.  The micro SD will shows up as /dev/mmcblk0.
+
+    tasks:
+
+      - name: Install parted
+        package:
+          name: parted
+          state: present
+        tags:
+          - setup
+
+      - name: Create Primary partition
+        parted:
+          device: /dev/sda
+          number: 1
+          state: present
+        tags:
+          - setup
+
+An ext4 file system is then created,
+
+      - name: Create a ext4 filesystem on /dev/sda1
+        filesystem:
+          fstype: ext4
+          dev: /dev/sda1
+        tags:
+          - setup
+
+As well as any mount and volume directories.
+
+      - name: Ensure Gluster brick and mount directories exist.
+        file:
+          path: "{{ item }}"
+          state: directory
+          mode: 0775
+        with_items:
+          - "{{ gluster_brick_dir }}"
+          - "{{ gluster_mount_dir }}"
+
+
+Which are then mounted and added to the /etc/fstab file.
+
+      - name: Mount "{{ gluster_brick_dir }}"
+        mount:
+          path: "{{ gluster_brick_dir }}"
+          src: /dev/sda1
+          fstype: ext4
+          state: present
+        tags:
+          - setup
+
+The real magic happens with the gluster_volume module.  It will create the defined brick and reach out to any and all other nodes defined in the inventory file to add them to the cluster and start replication.  `force: yes` is only used because this is happening on the /dev/sda partition, which gluster assumes is the root partition, but in this case is not.
+
+      - name: Configure Gluster volume.
+        gluster_volume:
+          state: present
+          name: "{{ gluster_brick_name }}"
+          brick: "{{ gluster_brick_dir }}"
+          replicas: "{{ groups.gluster | length }}"
+          cluster: "{{ groups.gluster | join(',') }}"
+          host: "{{ inventory_hostname }}"
+          force: yes
+        run_once: true
+
+Finally, mount the volume with the gluster-client.
+
+      - name: Ensure Gluster volume is mounted.
+        mount:
+          name: "{{ gluster_mount_dir }}"
+          src: "{{ inventory_hostname }}:/{{ gluster_brick_name }}"
+          fstype: glusterfs
+          opts: "defaults,_netdev,log-level=WARNING,log-file=/var/log/gluster.log"
+          state: mounted
+
+### Mysql test
+
+Where `/mnt/g1` is the mounted gluster share on every box.
+
+**mysql-stack.yml**
+
+    version: '3'
+
+    services:
+
+      mysql:
+        image: hypriot/rpi-mysql
+        environment:
+          - MYSQL_ROOT_PASSWORD=root
+          - MYSQL_DATABASE=test
+          - MYSQL_USER=test
+          - MYSQL_PASSWORD=test
+        volumes:
+          - /mnt/g1/mysql:/var/lib/mysql/
+        ports:
+          - 3306:3306
+
+Deployed with:
+
+    mkdir -p /mnt/g1/mysql
+    docker stack deploy -c mysql-stack.yml mysql
+
+With 3 nodes running, you can see the mysql directory is replicating to all 3 nodes
+
+* ninja
+
+    root@ninja:~# ls -list /mnt/g1/mysql/
+    total 28684
+    12866449624579713480  5120 -rw-rw---- 1 999 docker  5242880 Aug 19 09:04 ib_logfile0
+     9617335984120224053     4 drwx------ 2 999 docker     4096 Aug 18 11:31 test
+    13443460668165679553 18432 -rw-rw---- 1 999 docker 18874368 Aug 18 11:31 ibdata1
+    10905877464947696036  5120 -rw-rw---- 1 999 docker  5242880 Aug 18 11:31 ib_logfile1
+    12433439431064392233     4 drwx------ 2 999 docker     4096 Aug 18 11:31 mysql
+    13446363851844762839     4 drwx------ 2 999 docker     4096 Aug 18 11:31 performance_schema
+
+* venus
+
+    root@venus:~# ls -list /mnt/g1/mysql/
+    total 28684
+    12866449624579713480  5120 -rw-rw---- 1 999 docker  5242880 Aug 19 09:04 ib_logfile0
+     9617335984120224053     4 drwx------ 2 999 docker     4096 Aug 18 11:31 test
+    13443460668165679553 18432 -rw-rw---- 1 999 docker 18874368 Aug 18 11:31 ibdata1
+    10905877464947696036  5120 -rw-rw---- 1 999 docker  5242880 Aug 18 11:31 ib_logfile1
+    12433439431064392233     4 drwx------ 2 999 docker     4096 Aug 18 11:31 mysql
+    13446363851844762839     4 drwx------ 2 999 docker     4096 Aug 18 11:31 performance_schema
+
+* oroku
+
+    root@oroku:~# ls -list /mnt/g1/mysql/
+    total 28684
+    12866449624579713480  5120 -rw-rw---- 1 999 docker  5242880 Aug 19 09:04 ib_logfile0
+     9617335984120224053     4 drwx------ 2 999 docker     4096 Aug 18 11:31 test
+    13443460668165679553 18432 -rw-rw---- 1 999 docker 18874368 Aug 18 11:31 ibdata1
+    10905877464947696036  5120 -rw-rw---- 1 999 docker  5242880 Aug 18 11:31 ib_logfile1
+    12433439431064392233     4 drwx------ 2 999 docker     4096 Aug 18 11:31 mysql
+    13446363851844762839     4 drwx------ 2 999 docker     4096 Aug 18 11:31 performance_schema
+
+I'm thinking if all three of these nodes are running in Docker Swarm mode and the service dies and is restarted on any of the nodes, It will continue to have the same data on all three.  Have not tested this, yet.
+
 ### Docker Swarm
+
+
