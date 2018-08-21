@@ -110,12 +110,12 @@ If you want ansible to have passwordless sudo, where user == your user
     root@odroid:~# cat /etc/sudoers.d/user
     user ALL=(ALL) NOPASSWD: ALL
 
-Install a few dependencies, upgrade, and reboot.  Do this with all three nodes.
+Upgrade, install python, and reboot.  Do this with all three nodes.
 
     apt update
     apt upgrade
-    apt install vim
     apt install python
+    reboot
 
 If you want passwordless ssh access, add an ssh key to each host.
 
@@ -318,6 +318,38 @@ Verify volume with:
 ### Docker Swarm
 
 Setting up Docker Swarm is easy enough, so I won't go in to too much detail and will do a lazy set up for this example.
+
+On each of the nodes, download the [docker-install](https://github.com/docker/docker-install) script and run it.
+
+    apt install curl
+    curl -fsSL get.docker.com -o get-docker.sh
+    sh get-docker.sh
+
+Add your user to the docker group, if you want to run it without sudo, where user == your user
+
+    sudo usermod -aG docker user
+
+Init the Swarm
+
+    root@oroku:~# docker swarm init
+
+Check to see what the manager join token is.
+
+    root@oroku:~# docker swarm join-token manager
+
+Run the command it spits back at you on the other two nodes.
+
+    root@venus:~# docker swarm join --token <manager-token-goes-here> 192.168.123.123:2377
+    root@ninja:~# docker swarm join --token <manager-token-goes-here> 192.168.123.123:2377
+
+Verify that the Swarm is up and running with 3 managers.
+
+    ID                            HOSTNAME            STATUS              AVAILABILITY        MANAGER STATUS      ENGINE VERSION
+    ukqyy69598inihrq29kf3preo     ninja.dojo.io       Ready               Active              Reachable           18.06.0-ce
+    csa4ykcq1nszafenlewvq5gj0     oroku.dojo.io       Ready               Active              Leader              18.06.0-ce
+    a2uu7sljay4q7rueez6thxj6d *   venus.dojo.io       Ready               Active              Reachable           18.06.0-ce
+
+Docker Swarm is now up and ready to start running services!  Now, to do a quick test and see if data volumes will persist across the nodes.
 
 ### Mysql test
 
