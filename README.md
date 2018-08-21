@@ -2,7 +2,7 @@
 
 With a little inspiration from the [200TB Glusterfs Odroid HC-2 Build](https://www.reddit.com/r/DataHoarder/comments/8ocjxz/200tb_glusterfs_odroid_hc2_build/) posted to [/r/DataHoarder/](https://www.reddit.com/r/DataHoarder/) a while back and a whole lot of [bonus.ly](https://bonus.ly/) dollars from work, I have finally completed my 3 node HC-1 cluster build and am sharing my experience with anyone else wanting to check out single board computing for themselves.  Unlike the massive amount of storage provided by the [Odroid HC-2](https://www.hardkernel.com/main/products/prdt_info.php?g_code=G151505170472) build, I am using the [Odroid HC-1](https://www.hardkernel.com/main/products/prdt_info.php?g_code=G150229074080).  The main difference being, it will only fit a 2.5" drive, where the HC-2 will fit a full size 3.5 inch HDD.  The purpose of this build is not a NAS, but rather a focus on clustering software itself.  Primarily, Docker Swarm backed by Glusterfs.  Future plans also include testing Elasticsearch, Hadoop, and any other clustering software that [sparks](https://spark.apache.org/) my interest.
 
-![Odroid Front](https://github.com/jahrik/odroid_cluster/blob/master/pics/odroid_01.jpg)
+![Odroid Front](https://github.com/jahrik/odroid_cluster/blob/master/pics/odroid_01.jpg?raw=true)
 
 ## Parts List
 Here is the complete parts list and prices in US dollars.  There are a couple of ways you could go with powering this, so I will create two lists for power, including tools and other things I bought to make the build a little better, but are not necessary for it to work.  All of it was purchased from Amazon, so prices may vary a bit.
@@ -15,7 +15,7 @@ Here is the complete parts list and prices in US dollars.  There are a couple of
 | [240GB SSD](https://www.amazon.com/gp/product/B01M61OWRI/ref=oh_aui_detailpage_o00_s01?ie=UTF8&psc=1) | 3 | $47.99 | $143.97 |
 | [80mm Fan](https://www.amazon.com/gp/product/B07DXNT9J9/ref=oh_aui_detailpage_o02_s00?ie=UTF8&psc=1) | 1 | $15.95 | $15.95 |
 | [6 pack Cat 6 Ethernet Cable 1 ft](https://www.amazon.com/gp/product/B01IQWGKQ6/ref=oh_aui_detailpage_o00_s00?ie=UTF8&psc=1) | 1 | $8.90 | $8.90 |
-|**Total**|||**$395.60**|
+|**Total**|||**$383.14**|
 
 ### Power option #1 - Standard Odroid power supplies
 | Part        |  Amount  |  Price  | Total |
@@ -38,7 +38,7 @@ Here is the complete parts list and prices in US dollars.  There are a couple of
 
 ## Putting it together
 
-I started with one Odroid and added to it over a few months.  I have been tinkering with a couple of Raspberry Pi 3B+ and having fun, but wanted something a bit more powerful for running tests and possibly use as a logging and analytics back end, down the road when I get bored with it and just make it do a thing for a while.  One of the first things you'll notice, moving from a Pi to these Odroids, is that they have different power needs than most smaller boards because they need more power to run a SATA connected drive.  The casing on the HC-1 acts as both a stackable case and a heat sink, so scaling is easy.  This is one nice benefit over some of the other boards out there that will also require a case.
+I started with one Odroid and added to it over a few months.  I had been tinkering with a couple of Raspberry Pi 3B+ and having fun and decided I wanted something a bit more powerful for running tests and possibly use as a logging and analytics back end down the road when I get bored with it and just make it do a thing for a while.  One of the first things you'll notice, moving from a Pi to these Odroids, is that they have different power needs than most smaller boards because they need more power to run a SATA connected drive.  The casing on the HC-1 acts as both a stackable case and a heat sink, so scaling is easy.  This is one nice benefit over some of the other boards out there that will also require a case.
 
 ### Power
 
