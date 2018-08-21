@@ -447,7 +447,7 @@ venus
     11527446623504689574 9 -rw-rw---- 1 999 docker 8618 Aug 21 06:17 nodes.frm
     13231204873164849180 1 -rw-rw---- 1 999 docker   65 Aug 21 06:07 db.opt
 
-venus
+ninja
 
     root@ninja:~# ls -list /mnt/g1/mysql/odroid/
     total 9
@@ -514,4 +514,8 @@ Check that the table still exists.
     +-------+-------------+------+-----+---------+----------------+
     3 rows in set (0.01 sec)
 
+**Woot!**  Good enough for a first test for me.  Now the fun can begin!
 
+### Final Thoughts
+
+I like these little boards and am exited to see what I can make and test on this cluster setup.  My main gripe after using these for a month or so now, would be power issues.  Even with the power brick that comes from HardKernel these things don't always like to boot.  Sometimes, it takes a few reboots before it will come back up.  This being tested on previously functioning installs of ubuntu 16.04 and 18.04.  I have also been noticing this on the 20 amp power supply I have them plugged in to.  At times it seems as though it's still not enough to power all 3 of these and 1 or 2 will fail to boot up from a full cluster restart.  Tested by un-plugging and plugging back in the power supply directly from the power strip and causing all three nodes to cycle.  When they are up and running, however, they have been working well enough to get plenty of tests run.  Gluster has been working great!  Docker and Docker Swarm have been a little flaky, but it still seams very promising.
