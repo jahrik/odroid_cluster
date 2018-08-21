@@ -38,7 +38,7 @@ Here is the complete parts list and prices in US dollars.  There are a couple of
 
 ## Putting it together
 
-I started with one Odroid and added to it over a few months.  I have been tinkering with a couple of Raspberry Pi 3B+ and having fun, but wanted something a bit more powerful for running tests and possibly use as a logging and analytics back end, down the road when I get bored with it and just make it do a thing for a while. 
+I started with one Odroid and added to it over a few months.  I have been tinkering with a couple of Raspberry Pi 3B+ and having fun, but wanted something a bit more powerful for running tests and possibly use as a logging and analytics back end, down the road when I get bored with it and just make it do a thing for a while.  One of the first things you'll notice, moving from a Pi to these Odroids, is that they have different power needs than most smaller boards because they need more power to run a SATA connected drive.  The casing on the HC-1 acts as both a stackable case and a heat sink, so scaling is easy.  This is one nice benefit over some of the other boards out there that will also require a case.
 
 ### Power
 
