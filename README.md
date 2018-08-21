@@ -42,11 +42,11 @@ I started with one Odroid and added to it over a few months.  I had been tinkeri
 
 ### Power
 
-![Power Supply](https://github.com/jahrik/odroid_cluster/blob/master/pics/power_supply.jpg)
+![Power Supply](https://github.com/jahrik/odroid_cluster/blob/master/pics/power_supply.jpg?raw=true)
 
 The [5V 20A Power Supply](https://www.amazon.com/gp/product/B06XK2DDW4/ref=oh_aui_detailpage_o04_s01?ie=UTF8&psc=1) I went with, should be enough to power 5 HC-1's at load, which is good enough for what I have planned.  I used a Powerpole power splitter for the first time ever and am pretty happy with how it turned out.  I can easily make a new power cable, add a 4 Amp fuse, and add another node to the cluster.  Be sure and use the 15 Amp connectors, the 30 Amp connectors that came with the crimper are too big for these small wires.
 
-![Odroid Front](https://github.com/jahrik/odroid_cluster/blob/master/pics/plug_parts.jpg)
+![Odroid Front](https://github.com/jahrik/odroid_cluster/blob/master/pics/plug_parts.jpg?raw=true)
 
 The 5V 4A power brick you can order with the HC-1 works just fine and that's what I used while evaluating the first one, but I don't want to manage 3 to 5 of those blocks in my already filling up power strip on the bottom shelf of the rack, so that is why I went with a solution that will scale with the number of nodes I add and then some.
 
@@ -54,13 +54,13 @@ From failed attempts at trying to power up the HC-1 with it plugged into USB pow
 
 **This will not work**
 
-![USB Power Supply](https://github.com/jahrik/odroid_cluster/blob/master/pics/usb_power_supply.jpg)
+![USB Power Supply](https://github.com/jahrik/odroid_cluster/blob/master/pics/usb_power_supply.jpg?raw=true)
 
 ### Cooling
 
 I went with a 5V USB powered fan and tested it plugged in to the front of one of the HC-1 and it worked great, but I opted to take a spare connector and plug it directly in to the power splitter.  This means it runs at full speed at all times, but so far, that hasn't been a problem.  Things stay very cool and the fan barely makes any noise, even at full speed. I've been happy with every Noctua fan I've bought.
 
-![Odroid Back](https://github.com/jahrik/odroid_cluster/blob/master/pics/odroid_03.jpg)
+![Odroid Back](https://github.com/jahrik/odroid_cluster/blob/master/pics/odroid_03.jpg?raw=true)
 
 ### OS
 
