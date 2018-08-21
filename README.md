@@ -376,42 +376,142 @@ Where `/mnt/g1` is the mounted gluster share on every box.
 Deployed with:
 
     mkdir -p /mnt/g1/mysql
-    docker stack deploy -c mysql-stack.yml mysql
 
-With 3 nodes running, you can see the mysql directory is replicating to all 3 nodes
+    root@oroku:~# docker stack deploy -c mysql-stack.yml mysql
+    Creating network mysql_default
+    Creating service mysql_mysql
 
-* ninja
+Running `docker stack ps` shows that it's running on host venus.
 
-    root@ninja:~# ls -list /mnt/g1/mysql/
-    total 28684
-    12866449624579713480  5120 -rw-rw---- 1 999 docker  5242880 Aug 19 09:04 ib_logfile0
-     9617335984120224053     4 drwx------ 2 999 docker     4096 Aug 18 11:31 test
-    13443460668165679553 18432 -rw-rw---- 1 999 docker 18874368 Aug 18 11:31 ibdata1
-    10905877464947696036  5120 -rw-rw---- 1 999 docker  5242880 Aug 18 11:31 ib_logfile1
-    12433439431064392233     4 drwx------ 2 999 docker     4096 Aug 18 11:31 mysql
-    13446363851844762839     4 drwx------ 2 999 docker     4096 Aug 18 11:31 performance_schema
+    root@oroku:~# docker stack ps mysql           
+    ID                  NAME                IMAGE                      NODE                DESIRED STATE       CURRENT STATE                  ERROR               PORTS
+    ul55v78dgef7        mysql_mysql.1       hypriot/rpi-mysql:latest   venus.dojo.io       Running             Running 21 seconds ago   
 
-* venus
+SSH to host venus and open a mysql shell on the container itself to generate a bit of data.
 
-    root@venus:~# ls -list /mnt/g1/mysql/
-    total 28684
-    12866449624579713480  5120 -rw-rw---- 1 999 docker  5242880 Aug 19 09:04 ib_logfile0
-     9617335984120224053     4 drwx------ 2 999 docker     4096 Aug 18 11:31 test
-    13443460668165679553 18432 -rw-rw---- 1 999 docker 18874368 Aug 18 11:31 ibdata1
-    10905877464947696036  5120 -rw-rw---- 1 999 docker  5242880 Aug 18 11:31 ib_logfile1
-    12433439431064392233     4 drwx------ 2 999 docker     4096 Aug 18 11:31 mysql
-    13446363851844762839     4 drwx------ 2 999 docker     4096 Aug 18 11:31 performance_schema
+    root@venus:~# docker ps
+    CONTAINER ID        IMAGE                      COMMAND                  CREATED              STATUS              PORTS               NAMES
+    a2c7d29790ab        hypriot/rpi-mysql:latest   "/entrypoint.sh mysq…"   About a minute ago   Up About a minute   3306/tcp            mysql_mysql.1.21an16vybjn7ipve11krmrv8b
 
-* oroku
+    root@venus:~# docker exec -it a2c7d29790ab mysql -u'root' -p'root'
+    Welcome to the MySQL monitor.  Commands end with ; or \g.
+    Your MySQL connection id is 2
+    Server version: 5.5.60-0+deb7u1 (Debian)
 
-    root@oroku:~# ls -list /mnt/g1/mysql/
-    total 28684
-    12866449624579713480  5120 -rw-rw---- 1 999 docker  5242880 Aug 19 09:04 ib_logfile0
-     9617335984120224053     4 drwx------ 2 999 docker     4096 Aug 18 11:31 test
-    13443460668165679553 18432 -rw-rw---- 1 999 docker 18874368 Aug 18 11:31 ibdata1
-    10905877464947696036  5120 -rw-rw---- 1 999 docker  5242880 Aug 18 11:31 ib_logfile1
-    12433439431064392233     4 drwx------ 2 999 docker     4096 Aug 18 11:31 mysql
-    13446363851844762839     4 drwx------ 2 999 docker     4096 Aug 18 11:31 performance_schema
+    Copyright (c) 2000, 2018, Oracle and/or its affiliates. All rights reserved.
 
-I'm thinking if all three of these nodes are running in Docker Swarm mode and the service dies and is restarted on any of the nodes, It will continue to have the same data on all three.  Have not tested this, yet.
+    Oracle is a registered trademark of Oracle Corporation and/or its
+    affiliates. Other names may be trademarks of their respective
+    owners.
+
+    Type 'help;' or '\h' for help. Type '\c' to clear the current input statement.
+
+    mysql>
+
+Create a database
+
+    mysql> create database odroid;
+    Query OK, 1 row affected (0.07 sec)
+
+Create a table
+
+    mysql> CREATE  TABLE IF NOT EXISTS `odroid`.`nodes` (
+           `id` INT AUTO_INCREMENT ,
+           `host` VARCHAR(15) NOT NULL ,
+           `model` VARCHAR(15) NOT NULL ,
+           PRIMARY KEY (`id`));
+
+    mysql> describe nodes;
+    +-------+-------------+------+-----+---------+----------------+
+    | Field | Type        | Null | Key | Default | Extra          |
+    +-------+-------------+------+-----+---------+----------------+
+    | id    | int(11)     | NO   | PRI | NULL    | auto_increment |
+    | host  | varchar(15) | NO   |     | NULL    |                |
+    | model | varchar(15) | NO   |     | NULL    |                |
+    +-------+-------------+------+-----+---------+----------------+
+    3 rows in set (0.01 sec)
+
+Gluster is replicating the new mysql database to all 3 nodes.
+
+oroku
+
+    root@oroku:/home/wgill# ls -list /mnt/g1/mysql/odroid/
+    total 9
+    11527446623504689574 9 -rw-rw---- 1 999 docker 8618 Aug 21 06:17 nodes.frm
+    13231204873164849180 1 -rw-rw---- 1 999 docker   65 Aug 21 06:07 db.opt
+
+venus
+
+    root@venus:~# ls -list /mnt/g1/mysql/odroid/
+    total 9
+    11527446623504689574 9 -rw-rw---- 1 999 docker 8618 Aug 21 06:17 nodes.frm
+    13231204873164849180 1 -rw-rw---- 1 999 docker   65 Aug 21 06:07 db.opt
+
+venus
+
+    root@ninja:~# ls -list /mnt/g1/mysql/odroid/
+    total 9
+    11527446623504689574 9 -rw-rw---- 1 999 docker 8618 Aug 21 06:17 nodes.frm
+    13231204873164849180 1 -rw-rw---- 1 999 docker   65 Aug 21 06:07 db.opt
+
+To replicate a soft fail-over, I'll set the node it's running on to drain and see if it migrates to another node and starts back up.
+
+    root@oroku:/home/wgill# docker node update --availability drain venus.dojo.io
+    venus.dojo.io
+
+`docker node ls` shows that the node is now set to drain.
+
+    root@oroku:/home/wgill# docker node ls
+    ID                            HOSTNAME            STATUS              AVAILABILITY        MANAGER STATUS      ENGINE VERSION
+    12fbmbm4hoebavv9z5ihxhetp     ninja.dojo.io       Ready               Active              Reachable           18.06.0-ce
+    csa4ykcq1nszafenlewvq5gj0 *   oroku.dojo.io       Ready               Active              Reachable           18.06.0-ce
+    a2uu7sljay4q7rueez6thxj6d     venus.dojo.io       Ready               Drain               Leader              18.06.0-ce
+
+The mysql service has moved to node `ninja`
+
+    root@oroku:/home/wgill# docker stack ps mysql
+    ID                  NAME                          IMAGE                      NODE                        DESIRED STATE       CURRENT STATE                 ERROR               PORTS
+    j9eqoykbdix5        mysql_mysql.1                 hypriot/rpi-mysql:latest   ninja.dojo.io               Running             Running 29 seconds ago                            
+    21an16vybjn7         \_ mysql_mysql.1             hypriot/rpi-mysql:latest   venus.dojo.io               Shutdown            Shutdown about a minute ago  
+        
+Verify that the data has persisted by finding the container now running on the ninja node.
+
+    root@ninja:~# docker ps
+    CONTAINER ID        IMAGE                      COMMAND                  CREATED             STATUS              PORTS               NAMES
+    dd031910ccc4        hypriot/rpi-mysql:latest   "/entrypoint.sh mysq…"   2 minutes ago       Up About a minute   3306/tcp            mysql_mysql.1.j9eqoykbdix5ub13n7gm0ywfz
+
+Open a mysql shell
+
+    root@ninja:~# docker exec -it dd031910ccc4 mysql -u'root' -p'root'
+    Welcome to the MySQL monitor.  Commands end with ; or \g.
+    Your MySQL connection id is 1
+    Server version: 5.5.60-0+deb7u1 (Debian)
+
+    Copyright (c) 2000, 2018, Oracle and/or its affiliates. All rights reserved.
+
+    Oracle is a registered trademark of Oracle Corporation and/or its
+    affiliates. Other names may be trademarks of their respective
+    owners.
+
+    Type 'help;' or '\h' for help. Type '\c' to clear the current input statement.
+
+    mysql>
+
+Check that the table still exists.
+
+    mysql> use odroid;
+    Reading table information for completion of table and column names
+    You can turn off this feature to get a quicker startup with -A
+
+    Database changed
+    mysql> describe nodes;
+    +-------+-------------+------+-----+---------+----------------+
+    | Field | Type        | Null | Key | Default | Extra          |
+    +-------+-------------+------+-----+---------+----------------+
+    | id    | int(11)     | NO   | PRI | NULL    | auto_increment |
+    | host  | varchar(15) | NO   |     | NULL    |                |
+    | model | varchar(15) | NO   |     | NULL    |                |
+    +-------+-------------+------+-----+---------+----------------+
+    3 rows in set (0.01 sec)
+
 
