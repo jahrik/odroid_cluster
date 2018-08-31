@@ -1,11 +1,13 @@
 # Odroid HC-1 Cluster Build
 
-With a little inspiration from the [200TB Glusterfs Odroid HC-2 Build](https://www.reddit.com/r/DataHoarder/comments/8ocjxz/200tb_glusterfs_odroid_hc2_build/) posted to [/r/DataHoarder/](https://www.reddit.com/r/DataHoarder/) a while back and a whole lot of [bonus.ly](https://bonus.ly/) dollars from work, I have finally completed my 3 node HC-1 cluster build and am sharing my experience with anyone else wanting to check out single board computing for themselves.  Unlike the massive amount of storage provided by the [Odroid HC-2](https://www.hardkernel.com/main/products/prdt_info.php?g_code=G151505170472) build, I am using the [Odroid HC-1](https://www.hardkernel.com/main/products/prdt_info.php?g_code=G150229074080).  The main difference being, it will only fit a 2.5" drive, where the HC-2 will fit a full size 3.5 inch HDD.  The purpose of this build is not a NAS, but rather a focus on clustering software itself.  Primarily, Docker Swarm backed by Glusterfs.  Future plans also include testing Elasticsearch, Hadoop, and any other clustering software that [sparks](https://spark.apache.org/) my interest.
+With a little inspiration from the [200TB Glusterfs Odroid HC-2 Build](https://www.reddit.com/r/DataHoarder/comments/8ocjxz/200tb_glusterfs_odroid_hc2_build/) posted to [/r/DataHoarder/](https://www.reddit.com/r/DataHoarder/) a while back and a whole lot of [bonus.ly](https://bonus.ly/) dollars from work, I have finally completed my 3 node HC-1 cluster build and am writing to share my experiences with anyone else interested in checking out single board computing for themselves.  Unlike the massive amount of storage provided by the [Odroid HC-2](https://www.hardkernel.com/main/products/prdt_info.php?g_code=G151505170472) build, I am using the [Odroid HC-1](https://www.hardkernel.com/main/products/prdt_info.php?g_code=G150229074080).  The main difference being, it will only fit a 2.5" drive, where the HC-2 will fit a full size 3.5 inch HDD.  The purpose of this build is not a NAS, but rather a focus on clustering software itself.  Primarily, Docker Swarm backed by Glusterfs for highly available containers and mounted volumes.
 
 ![Odroid Front](https://github.com/jahrik/odroid_cluster/blob/master/pics/odroid_01.jpg?raw=true)
 
 ## Parts List
-Here is the complete parts list and prices in US dollars.  There are a couple of ways you could go with powering this, so I will create two lists for power, including tools and other things I bought to make the build a little better, but are not necessary for it to work.  All of it was purchased from Amazon, so prices may vary a bit.
+Here is the complete parts list and prices in US dollars.  There are a couple of ways you could go with powering this, so I will create separate lists for power, including tools and other things I bought to make the build a little better, but are not necessary for it to work.  All of it was purchased from Amazon, so prices may vary a bit.
+
+> The [5V 20A Power Supply](https://www.amazon.com/gp/product/B06XK2DDW4/ref=oh_aui_detailpage_o04_s01?ie=UTF8&psc=1) I first purchased for this project ended up not being able to supply the right amount of power needed to keep the odroid running at any amount of higher than average load.  I was able to power all three with it, but when it came to stress testing them, even tests that were just downloading a large file to the device or using around 50% CPU would cause the odroid to crash.  There were also times that the odroid would not seam to gain enough power to boot and would loop in a reboot cycle for quite some time or never fully boot back up.  I do not recommend this model for this project.  I have since replaced it with Power Option #3 and am very happy with the results. This lab grade, [DC Power Supply 1.5-15V 30A](https://www.amazon.com/gp/product/B01KPBAN6O/ref=oh_aui_detailpage_o04_s02?ie=UTF8&psc=1), is way overkill for anyone in their right mind, but will serve as a great tool in my homelab and be able to run a lot more devices in the future, as I expand out my SBC collection.  I have adjusted it up to around 5.3-5.4 volts and the Odroids seem to run much better with a bit of a boost.  I have since confirmed with a digital multimeter that a steady supply of around 5.3 comes from the 5.5mm barrel plugs connected.
 
 ### Odroid
 | Part        |  Amount  |  Price  | Total |
@@ -26,7 +28,7 @@ Here is the complete parts list and prices in US dollars.  There are a couple of
 ### Power option #2 - What I did.
 | Part        |  Amount  |  Price  | Total |
 |:----------- |:--------:|:-------:| -----:|
-| [5V 20A Power Supply](https://www.amazon.com/gp/product/B06XK2DDW4/ref=oh_aui_detailpage_o04_s01?ie=UTF8&psc=1) | 1 | $17.99 | $17.99 |
+| ~~[5V 20A Power Supply](https://www.amazon.com/gp/product/B06XK2DDW4/ref=oh_aui_detailpage_o04_s01?ie=UTF8&psc=1)~~ | ~~1~~ | ~~$17.99~~ | ~~$17.99~~ |
 | [9 Port 40A Power Splitter](https://www.amazon.com/gp/product/B074QMRBPB/ref=od_aui_detailpages00?ie=UTF8&psc=1) | 1 | $58.00 | $58.00 |
 | [20 pack 10 inch 2.1 x 5.5mm Male DC Power Pigtail Connectors](https://www.amazon.com/gp/product/B0725BCVH1/ref=od_aui_detailpages00?ie=UTF8&psc=1) | 1 | $9.99 | $9.99 |
 | [Wire Crimping Tool for Powerpole](https://www.amazon.com/gp/product/B01MZZZ19P/ref=od_aui_detailpages00?ie=UTF8&psc=1) | 1 | $34.99 | $34.99 |
@@ -36,6 +38,13 @@ Here is the complete parts list and prices in US dollars.  There are a couple of
 | [10 pack 4 Amp Two Prong Blade Plug-in ATC Fuses](https://www.amazon.com/gp/product/B01HDUCOT4/ref=oh_aui_detailpage_o05_s00?ie=UTF8&psc=1) | 1 | $6.30 | $6.30 |
 |**Total**|||**$176.67**|
 
+### Power option #3 - More power!
+| Part        |  Amount  |  Price  | Total |
+|:----------- |:--------:|:-------:| -----:|
+| [DC Power Supply 1.5-15V 30A](https://www.amazon.com/gp/product/B01KPBAN6O/ref=oh_aui_detailpage_o04_s02?ie=UTF8&psc=1) | 1 | $149.99 | $149.99 |
+| [12 awg Copper Banana Plug](https://www.amazon.com/gp/product/B019J4N15S/ref=oh_aui_detailpage_o04_s00?ie=UTF8&psc=1) | 1 | $10.49 | $10.49 |
+|**Total**|||**$160.48**|
+
 ## Putting it together
 
 I started with one Odroid and added to it over a few months.  I had been tinkering with a couple of Raspberry Pi 3B+ and having fun and decided I wanted something a bit more powerful for running tests and possibly use as a logging and analytics back end down the road when I get bored with it and just make it do a thing for a while.  One of the first things you'll notice, moving from a Pi to these Odroids, is that they have different power needs than most smaller boards because they need more power to run a SATA connected drive.  The casing on the HC-1 acts as both a stackable case and a heat sink, so scaling is easy.  This is one nice benefit over some of the other boards out there that will also require a case.
@@ -44,7 +53,8 @@ I started with one Odroid and added to it over a few months.  I had been tinkeri
 
 ![Power Supply](https://github.com/jahrik/odroid_cluster/blob/master/pics/power_supply.jpg?raw=true)
 
-The [5V 20A Power Supply](https://www.amazon.com/gp/product/B06XK2DDW4/ref=oh_aui_detailpage_o04_s01?ie=UTF8&psc=1) I went with, should be enough to power 5 HC-1's at load, which is good enough for what I have planned.  I used a Powerpole power splitter for the first time ever and am pretty happy with how it turned out.  I can easily make a new power cable, add a 4 Amp fuse, and add another node to the cluster.  Be sure and use the 15 Amp connectors, the 30 Amp connectors that came with the crimper are too big for these small wires.
+~~The [5V 20A Power Supply](https://www.amazon.com/gp/product/B06XK2DDW4/ref=oh_aui_detailpage_o04_s01?ie=UTF8&psc=1) I went with, should be enough to power 5 HC-1's at load, which is good enough for what I have planned.~~[^1] I used a Powerpole power splitter for the first time ever and am pretty happy with how it turned out.  I can easily make a new power cable, add a 4 Amp fuse, and add another node to the cluster.  Be sure and use the 15 Amp connectors, the 30 Amp connectors that came with the crimper are too big for these small wires.
+> [^1] I ended up getting a much better [power supply](https://www.amazon.com/gp/product/B01KPBAN6O/ref=oh_aui_detailpage_o04_s02?ie=UTF8&psc=1).
 
 ![Odroid Front](https://github.com/jahrik/odroid_cluster/blob/master/pics/plug_parts.jpg?raw=true)
 
@@ -64,7 +74,9 @@ I went with a 5V USB powered fan and tested it plugged in to the front of one of
 
 ### OS
 
-So far, I've been able to get ubuntu 16.04 and 18.04 running, from [images found on the Odroid site](https://wiki.odroid.com/odroid-xu4/os_images/os_images).  I tested [Armbian](https://www.armbian.com/odroid-hc1/), but wasn't able to get a shell onto the box after.  Not sure if ssh is enabled by default or not.  Also, tested [Arch](https://archlinuxarm.org/platforms/armv7/samsung/odroid-xu4) without success, so far.  I'm happy with ubuntu 18.04 right now because Docker Swarm seems to be working as it should with armhf 32 bit applications.  I was having weird Kernel errors when I tested Docker Swarm on ubuntu 16.04 and wasn't ever able to get Swarm services started, however was able to start Docker containers in stand alone Docker mode.
+So far, I've been able to get ubuntu 16.04 and 18.04 running, from [images found on the Odroid site](https://wiki.odroid.com/odroid-xu4/os_images/os_images).  I tested [Armbian](https://www.armbian.com/odroid-hc1/), ~~but wasn't able to get a shell onto the box after.  Not sure if ssh is enabled by default or not.~~[^2] Also, tested [Arch](https://archlinuxarm.org/platforms/armv7/samsung/odroid-xu4) without success, so far.  I'm happy with ubuntu 18.04 right now because Docker Swarm seems to be working as it should with armhf 32 bit applications.  I was having weird Kernel errors when I tested Docker Swarm on ubuntu 16.04 and wasn't ever able to get Swarm services started, however was able to start Docker containers in stand alone Docker mode.
+
+> [^2] I've since switched to using the Armbian ubuntu bionic, 18.04 as the base for all three and it's working great.  Everything works out of the box so far (Glusterfs and Docker Swarm).
 
 **example error output for ubuntu 16.04 in Swarm mode**
 
