@@ -7,7 +7,8 @@ With a little inspiration from the [200TB Glusterfs Odroid HC-2 Build](https://w
 ## Parts List
 Here is the complete parts list and prices in US dollars.  There are a couple of ways you could go with powering this, so I will create separate lists for power, including tools and other things I bought to make the build a little better, but are not necessary for it to work.  All of it was purchased from Amazon, so prices may vary a bit.
 
-> The [5V 20A Power Supply](https://www.amazon.com/gp/product/B06XK2DDW4/ref=oh_aui_detailpage_o04_s01?ie=UTF8&psc=1) I first purchased for this project ended up not being able to supply the right amount of power needed to keep the odroid running at any amount of higher than average load.  I was able to power all three with it, but when it came to stress testing them, even tests that were just downloading a large file to the device or using around 50% CPU would cause the odroid to crash.  There were also times that the odroid would not seam to gain enough power to boot and would loop in a reboot cycle for quite some time or never fully boot back up.  I do not recommend this model for this project.  I have since replaced it with Power Option #3 and am very happy with the results. This lab grade, [DC Power Supply 1.5-15V 30A](https://www.amazon.com/gp/product/B01KPBAN6O/ref=oh_aui_detailpage_o04_s02?ie=UTF8&psc=1), is way overkill for anyone in their right mind, but will serve as a great tool in my homelab and be able to run a lot more devices in the future, as I expand out my SBC collection.  I have adjusted it up to around 5.3-5.4 volts and the Odroids seem to run much better with a bit of a boost.  I have since confirmed with a digital multimeter that a steady supply of around 5.3 comes from the 5.5mm barrel plugs connected.
+**note**
+> The [5V 20A Power Supply](https://www.amazon.com/gp/product/B06XK2DDW4/ref=oh_aui_detailpage_o04_s01?ie=UTF8&psc=1) I first purchased for this project ended up not being able to supply the right amount of power needed to keep the odroid running at any amount of higher than average load.  I was able to power all three with it, but when it came to stress testing them, even tests that were just downloading a large file to the device or using around 50% CPU would cause the odroid to crash.  There were also times that the odroid would not seam to gain enough power to boot and would loop in a reboot cycle for quite some time or never fully boot back up.  **I do not recommend this model for this project.**  I have since replaced it with Power Option #3 and am very happy with the results. This lab grade, [DC Power Supply 1.5-15V 30A](https://www.amazon.com/gp/product/B01KPBAN6O/ref=oh_aui_detailpage_o04_s02?ie=UTF8&psc=1), is way overkill for anyone in their right mind, but will serve as a great tool in my homelab and be able to run a lot more devices in the future, as I expand out my SBC collection.  I have adjusted it up to around 5.3-5.4 volts and the Odroids seem to run much better with a bit of a boost.  I have since confirmed with a digital multimeter that a steady supply of around 5.3 volts comes from the 5.5mm barrel plugs.
 
 ### Odroid
 | Part        |  Amount  |  Price  | Total |
@@ -51,7 +52,7 @@ I started with one Odroid and added to it over a few months.  I had been tinkeri
 
 ### Power
 
-![Power Supply](https://github.com/jahrik/odroid_cluster/blob/master/pics/power_supply.jpg?raw=true)
+![Big Power Supply](https://github.com/jahrik/odroid_cluster/blob/master/pics/big_power_supply.jpg?raw=true)
 
 ~~The [5V 20A Power Supply](https://www.amazon.com/gp/product/B06XK2DDW4/ref=oh_aui_detailpage_o04_s01?ie=UTF8&psc=1) I went with, should be enough to power 5 HC-1's at load, which is good enough for what I have planned.~~[^1] I used a Powerpole power splitter for the first time ever and am pretty happy with how it turned out.  I can easily make a new power cable, add a 4 Amp fuse, and add another node to the cluster.  Be sure and use the 15 Amp connectors, the 30 Amp connectors that came with the crimper are too big for these small wires.
 > [^1] I ended up getting a much better [power supply](https://www.amazon.com/gp/product/B01KPBAN6O/ref=oh_aui_detailpage_o04_s02?ie=UTF8&psc=1).
@@ -65,6 +66,10 @@ From failed attempts at trying to power up the HC-1 with it plugged into USB pow
 **This will not work**
 
 ![USB Power Supply](https://github.com/jahrik/odroid_cluster/blob/master/pics/usb_power_supply.jpg?raw=true)
+
+**This power supply ended up not working well, either**
+
+![Power Supply](https://github.com/jahrik/odroid_cluster/blob/master/pics/power_supply.jpg?raw=true)
 
 ### Cooling
 
