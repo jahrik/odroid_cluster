@@ -54,8 +54,8 @@ I started with one Odroid and added to it over a few months.  I had been tinkeri
 
 ![Big Power Supply](https://github.com/jahrik/odroid_cluster/blob/master/pics/big_power_supply.jpg?raw=true)
 
-~~The [5V 20A Power Supply](https://www.amazon.com/gp/product/B06XK2DDW4/ref=oh_aui_detailpage_o04_s01?ie=UTF8&psc=1) I went with, should be enough to power 5 HC-1's at load, which is good enough for what I have planned.~~ [^1] I used a Powerpole power splitter for the first time ever and am pretty happy with how it turned out.  I can easily make a new power cable, add a 4 Amp fuse, and add another node to the cluster.  Be sure and use the 15 Amp connectors, the 30 Amp connectors that came with the crimper are too big for these small wires.
-> [^1] I ended up getting a much better [power supply](https://www.amazon.com/gp/product/B01KPBAN6O/ref=oh_aui_detailpage_o04_s02?ie=UTF8&psc=1).
+~~The [5V 20A Power Supply](https://www.amazon.com/gp/product/B06XK2DDW4/ref=oh_aui_detailpage_o04_s01?ie=UTF8&psc=1) I went with, should be enough to power 5 HC-1's at load, which is good enough for what I have planned.~~ I used a Powerpole power splitter for the first time ever and am pretty happy with how it turned out.  I can easily make a new power cable, add a 4 Amp fuse, and add another node to the cluster.  Be sure and use the 15 Amp connectors, the 30 Amp connectors that came with the crimper are too big for these small wires.
+> I ended up getting a much better [power supply](https://www.amazon.com/gp/product/B01KPBAN6O/ref=oh_aui_detailpage_o04_s02?ie=UTF8&psc=1).
 
 ![Odroid Front](https://github.com/jahrik/odroid_cluster/blob/master/pics/plug_parts.jpg?raw=true)
 
