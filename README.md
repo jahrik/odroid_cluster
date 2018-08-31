@@ -54,7 +54,7 @@ I started with one Odroid and added to it over a few months.  I had been tinkeri
 
 ![Big Power Supply](https://github.com/jahrik/odroid_cluster/blob/master/pics/big_power_supply.jpg?raw=true)
 
-~~The [5V 20A Power Supply](https://www.amazon.com/gp/product/B06XK2DDW4/ref=oh_aui_detailpage_o04_s01?ie=UTF8&psc=1) I went with, should be enough to power 5 HC-1's at load, which is good enough for what I have planned.~~[^1] I used a Powerpole power splitter for the first time ever and am pretty happy with how it turned out.  I can easily make a new power cable, add a 4 Amp fuse, and add another node to the cluster.  Be sure and use the 15 Amp connectors, the 30 Amp connectors that came with the crimper are too big for these small wires.
+~~The [5V 20A Power Supply](https://www.amazon.com/gp/product/B06XK2DDW4/ref=oh_aui_detailpage_o04_s01?ie=UTF8&psc=1) I went with, should be enough to power 5 HC-1's at load, which is good enough for what I have planned.~~ [^1] I used a Powerpole power splitter for the first time ever and am pretty happy with how it turned out.  I can easily make a new power cable, add a 4 Amp fuse, and add another node to the cluster.  Be sure and use the 15 Amp connectors, the 30 Amp connectors that came with the crimper are too big for these small wires.
 > [^1] I ended up getting a much better [power supply](https://www.amazon.com/gp/product/B01KPBAN6O/ref=oh_aui_detailpage_o04_s02?ie=UTF8&psc=1).
 
 ![Odroid Front](https://github.com/jahrik/odroid_cluster/blob/master/pics/plug_parts.jpg?raw=true)
@@ -79,7 +79,7 @@ I went with a 5V USB powered fan and tested it plugged in to the front of one of
 
 ### OS
 
-So far, I've been able to get ubuntu 16.04 and 18.04 running, from [images found on the Odroid site](https://wiki.odroid.com/odroid-xu4/os_images/os_images).  I tested [Armbian](https://www.armbian.com/odroid-hc1/), ~~but wasn't able to get a shell onto the box after.  Not sure if ssh is enabled by default or not.~~[^2] Also, tested [Arch](https://archlinuxarm.org/platforms/armv7/samsung/odroid-xu4) without success, so far.  I'm happy with ubuntu 18.04 right now because Docker Swarm seems to be working as it should with armhf 32 bit applications.  I was having weird Kernel errors when I tested Docker Swarm on ubuntu 16.04 and wasn't ever able to get Swarm services started, however was able to start Docker containers in stand alone Docker mode.
+So far, I've been able to get ubuntu 16.04 and 18.04 running, from [images found on the Odroid site](https://wiki.odroid.com/odroid-xu4/os_images/os_images).  I tested [Armbian](https://www.armbian.com/odroid-hc1/), ~~but wasn't able to get a shell onto the box after.  Not sure if ssh is enabled by default or not.~~ [^2] Also, tested [Arch](https://archlinuxarm.org/platforms/armv7/samsung/odroid-xu4) without success, so far.  I'm happy with ubuntu 18.04 right now because Docker Swarm seems to be working as it should with armhf 32 bit applications.  I was having weird Kernel errors when I tested Docker Swarm on ubuntu 16.04 and wasn't ever able to get Swarm services started, however was able to start Docker containers in stand alone Docker mode.
 
 > [^2] I've since switched to using the Armbian ubuntu bionic, 18.04 as the base for all three and it's working great.  Everything works out of the box so far (Glusterfs and Docker Swarm).
 
