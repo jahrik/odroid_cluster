@@ -79,9 +79,9 @@ I went with a 5V USB powered fan and tested it plugged in to the front of one of
 
 ### OS
 
-So far, I've been able to get ubuntu 16.04 and 18.04 running, from [images found on the Odroid site](https://wiki.odroid.com/odroid-xu4/os_images/os_images).  I tested [Armbian](https://www.armbian.com/odroid-hc1/), ~~but wasn't able to get a shell onto the box after.  Not sure if ssh is enabled by default or not.~~ [^2] Also, tested [Arch](https://archlinuxarm.org/platforms/armv7/samsung/odroid-xu4) without success, so far.  I'm happy with ubuntu 18.04 right now because Docker Swarm seems to be working as it should with armhf 32 bit applications.  I was having weird Kernel errors when I tested Docker Swarm on ubuntu 16.04 and wasn't ever able to get Swarm services started, however was able to start Docker containers in stand alone Docker mode.
+So far, I've been able to get ubuntu 16.04 and 18.04 running, from [images found on the Odroid site](https://wiki.odroid.com/odroid-xu4/os_images/os_images).  I tested [Armbian](https://www.armbian.com/odroid-hc1/), ~~but wasn't able to get a shell onto the box after.  Not sure if ssh is enabled by default or not.~~ I'm certain this was power related and not Armbian related.  Also, tested [Arch](https://archlinuxarm.org/platforms/armv7/samsung/odroid-xu4) without success, so far.  I'm happy with ubuntu 18.04 right now because Docker Swarm seems to be working as it should with armhf 32 bit applications.  I was having weird Kernel errors when I tested Docker Swarm on ubuntu 16.04 and wasn't ever able to get Swarm services started, however was able to start Docker containers in stand alone Docker mode.
 
-> [^2] I've since switched to using the Armbian ubuntu bionic, 18.04 as the base for all three and it's working great.  Everything works out of the box so far (Glusterfs and Docker Swarm).
+> I've since switched to using the Armbian ubuntu bionic, 18.04 as the base for all three and it's working great.  Everything works out of the box so far (Glusterfs and Docker Swarm).
 
 **example error output for ubuntu 16.04 in Swarm mode**
 
